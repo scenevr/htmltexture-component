@@ -3,9 +3,14 @@
     <script src="../build.js"></script>
     <meta charset="utf-8"></meta>
     <style>
-      .scoreboard{ left: 0; top: 0; position: absolute; background: linear-gradient(#c0cad0, #e0e0e0); font-size: 30px; width: 512px; height: 512px; color: black; padding: 0; margin: 0; border: 5px solid #555; box-sizing: border-box;
-
+      body{
         font-family: 'roboto', 'open sans', sans-serif;
+      }
+      .scoreboard{
+        background: linear-gradient(#c0cad0, #e0e0e0); 
+        font-size: 30px; 
+        color: black; 
+        border: 5px solid #555; 
       }
       .scoreboard h1{
         padding: 22px;
@@ -31,36 +36,79 @@
       .scoreboard table td:last-child{
         text-align: right;
       }
+      #goodbye{
+        font-size: 48px;
+        line-height: 64px;
+        background: #f70;
+        border: 1px solid #a30;
+      }
+      .tower{
+        font-size: 48px;
+      }
+      .tower ul{
+        margin: 0;
+        padding: 0;
+      }
+      .tower li{
+        list-style: none;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+        line-height: 128px;
+        height: 128px;
+        margin: 0;
+        padding: 0;
+        background: #eee;
+      }
     </style>
   </head>
   <body>
-    <div id="hello" class="scoreboard">
-      <h1>Final Score!</b></h1>
-      <center>
-        ⚽
-      </center>
-
-      <table>
-        <tr><td>Country</td><td>Score</td></tr>
-        <tr><td>Germany</td><td>1</td></tr>
-        <tr><td>United Kingdom</td><td>0</td></tr>
-      </table>
-
-    </div>
-
-    <div id="goodbye" class="scoreboard">
-      <h1>Game over</h1>
-    </div>
-
-    <a-assets>
-    </a-assets>
-
     <a-scene>
+      <a-assets>
+        <div id="hello" class="scoreboard">
+          <h1>Final Score!</b></h1>
+          <center>
+            ⚽
+          </center>
+
+          <table>
+            <tr><td>Country</td><td>Score</td></tr>
+            <tr><td>Germany</td><td>1</td></tr>
+            <tr><td>United Kingdom</td><td>0</td></tr>
+          </table>
+
+        </div>
+
+        <div id="goodbye">
+          <center>🐻</center>
+        </div>
+
+        <div id="bears" class="aww">
+          Friends!
+          <img src="http://i.embed.ly/1/display/resize?url=https%3A%2F%2Fi.imgur.com%2Fg0GjChg.jpg&animate=false&quality=90&grow=true&width=480&height=420&key=90eb0b46c1e146e5afbbe0279e77866b" />
+        </div>
+
+        <div class="tower">
+          <ul>
+            <li>🐴</li>
+            <li>🐮</li>
+            <li>🐷</li>
+            <li>🐹</li>
+          </ul>
+        </div>
+      </a-assets>
+
       <a-sky color="#cef"></a-sky>
       <a-entity rotation="-90 0 0" geometry="primitive: plane; width: 64; height: 64;" material="repeat: 64 64; src: url(https://assets-scenevr-com.s3-us-west-1.amazonaws.com/prerelease/images/grid.png)"></a-entity>
 
-      <a-entity id="box" geometry="primitive: box" position="-2 1 -2" draw="width: 512; height: 512;" htmltexture="asset: #hello"></a-entity>
-      <a-entity id="box" geometry="primitive: box" position="2 1 -2" draw="width: 512; height: 512;" htmltexture="asset: #goodbye"></a-entity>
+      <a-entity geometry="primitive: box" scale="0.5 2 0.5" rotation="0 22d 0" position="0 2 -4" draw="width: 128; height: 512;" htmltexture="asset: .tower"></a-entity>
+
+      <a-entity id="box" geometry="primitive: box" position="-3 1 -4" draw="width: 512; height: 512;" htmltexture="asset: #hello"></a-entity>
+      
+      <a-entity geometry="primitive: box" position="3 1 -4" draw="width: 64; height: 64;" 
+      htmltexture="asset: #goodbye"></a-entity>
+
+      <a-entity geometry="primitive: box" position="6 1 -4" draw="width: 64; height: 64;" 
+      htmltexture="asset: #bears.aww"></a-entity>
     </a-scene>
 
     <script>

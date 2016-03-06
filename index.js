@@ -1,7 +1,8 @@
 /* globals AFRAME */
 
 var html2canvas = require('html2canvas/src/core');
-window.html2canvas = html2canvas;
+
+var renderedCanvas;
 
 AFRAME.registerComponent('htmltexture', {
   dependencies: ['draw'],
@@ -23,11 +24,9 @@ AFRAME.registerComponent('htmltexture', {
    */
   update: function () {
     var draw = this.el.components.draw;
-    var self = this;
     var selector = this.data.asset;
-
-    draw.render();
-    console.log(draw.canvas);
+    var width = draw.data.width;
+    var height = draw.data.height;
 
     if (this.rendering) {
       return;
@@ -35,37 +34,35 @@ AFRAME.registerComponent('htmltexture', {
 
     this.rendering = true;
 
-    console.log(selector);
-    html2canvas(document.querySelector(selector), { onrendered: function (canvas) {
-      document.querySelector(selector).style.display = 'none';
-      // ctx.drawImage(c, 0, 0);
-      window.xh = canvas;
-      // self.htmlcanvas = canvas;
+    var node = document.querySelector(selector);
+
+    if (!node) {
+      console.error('Could not find html element with selector "' + selector + '"');
+      return;
+    }
+
+    node.style.display = 'block';
+
+    var clone = node.cloneNode(true);
+    document.body.appendChild(clone);
+
+    clone.style.cssText = 'width: ' + width + 'px !important; height: ' + height + 'px !important; padding: 0; position: absolute; left: 0; top: 0; z-index: -1; box-sizing: border-box;';
+
+    html2canvas(clone, { width: width, height: height, onrendered: function (canvas) {
+      document.body.removeChild(clone);
+      renderedCanvas = canvas;
       draw.render();
     }});
-
-    // html2canvas(document.querySelector(this.data.asset), {
-    //   javascriptEnabled: false,
-    //   onrendered: function (canvas) {
-    //     // console.log('eh!?');
-    //     // self.htmlcanvas = canvas;
-    //   }
-    // });
   },
 
   render: function () {
     var draw = this.el.components.draw;
     var ctx = draw.ctx;
 
-    if (window.xh) {
-      ctx.drawImage(window.xh, 0, 0);
-      console.log('??');
+    if (renderedCanvas) {
+      ctx.drawImage(renderedCanvas, 0, 0);
     }
   },
-
-  //  var html = document.querySelector(this.data.asset).innerHTML;
-  //  ctx.fillText(html, 10, 10);
-  // },
 
   /**
    * Called when a component is removed (e.g., via removeAttribute).
