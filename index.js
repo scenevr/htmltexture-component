@@ -3,7 +3,7 @@
 var html2canvas = require('html2canvas/src/core');
 window.html2canvas = html2canvas;
 
-AFRAME.registerComponent('webtexture', {
+AFRAME.registerComponent('htmltexture', {
   dependencies: ['draw'],
   schema: {
     asset: {}
