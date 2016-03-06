@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <script src="../build.js"></script>
+    <meta charset="utf-8"></meta>
+    <style>
+      .scoreboard{ left: 0; top: 0; position: absolute; background: linear-gradient(#c0cad0, #e0e0e0); font-size: 30px; width: 512px; height: 512px; color: black; padding: 0; margin: 0; border: 5px solid #555; box-sizing: border-box;
+
+        font-family: 'roboto', 'open sans', sans-serif;
+      }
+      .scoreboard h1{
+        padding: 22px;
+        margin: 0;
+        color: #555;
+        text-align: center;
+      }
+      .scoreboard center{
+        font-size: 64px;
+        margin: 24px;
+      }
+      .scoreboard table{
+        width: 95%;
+        border-collapse: collapse;
+        margin: 10px;
+        border-bottom: 1px solid #aaa;
+        font-size: 1em;
+      }
+      .scoreboard table td{
+        border-top: 1px solid #aaa;
+        padding: 10px;
+      }
+      .scoreboard table td:last-child{
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="hello" class="scoreboard">
+      <h1>Final Score!</b></h1>
+      <center>
+        ⚽
+      </center>
+
+      <table>
+        <tr><td>Country</td><td>Score</td></tr>
+        <tr><td>Germany</td><td>1</td></tr>
+        <tr><td>United Kingdom</td><td>0</td></tr>
+      </table>
+
+    </div>
+
+    <div id="goodbye" class="scoreboard">
+      <h1>Game over</h1>
+    </div>
+
+    <a-assets>
+    </a-assets>
+
+    <a-scene>
+      <a-sky color="#cef"></a-sky>
+      <a-entity rotation="-90 0 0" geometry="primitive: plane; width: 64; height: 64;" material="repeat: 64 64; src: url(https://assets-scenevr-com.s3-us-west-1.amazonaws.com/prerelease/images/grid.png)"></a-entity>
+
+      <a-entity id="box" geometry="primitive: box" position="-2 1 -2" draw="width: 512; height: 512;" webtexture="asset: #hello"></a-entity>
+      <a-entity id="box" geometry="primitive: box" position="2 1 -2" draw="width: 512; height: 512;" webtexture="asset: #goodbye"></a-entity>
+    </a-scene>
+
+    <script>
+      var el = document.querySelector('#box');
+      var r = new THREE.Euler();
+      setInterval(function () {
+        r.y += 0.1;
+        el.setAttribute('rotation', r);
+      }, 1000 / 60);
+    </script>
+  </body>
+</html>
