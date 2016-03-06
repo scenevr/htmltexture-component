@@ -4,6 +4,61 @@ var html2canvas = require('html2canvas/src/core');
 
 var renderedCanvas;
 
+function queueRender (node, width, height, callback) {
+  var clone = node.cloneNode(true);
+  document.body.appendChild(clone);
+
+  clone.style.cssText = 'width: ' + width + 'px !important; height: ' + height + 'px !important; padding: 0; position: absolute; left: 0; top: 0; z-index: -1; box-sizing: border-box;';
+
+  function imgElements () {
+    return Array.prototype.slice.call(node.querySelectorAll('img'));
+  }
+
+  function isLoaded () {
+    var result = true;
+
+    imgElements().forEach(function (img) {
+      if (!img.complete) {
+        result = false;
+      }
+    });
+
+    return result;
+  }
+
+  var renderStarted = false;
+
+  function render () {
+    if (renderStarted) {
+      // Prevent render being called multiple times by the event listeners
+      return;
+    }
+
+    renderStarted = true;
+
+    html2canvas(clone, { width: width, height: height, onrendered: function (canvas) {
+      document.body.removeChild(clone);
+      callback(canvas);
+    }});
+  }
+
+  // todo - test crossOrigin attribute on images with different hostname and
+  //   warn if no crossOrigin permission found.
+
+  if (isLoaded()) {
+    render();
+  } else {
+    imgElements().forEach(function (img) {
+      img.addEventListener('load', function () {
+        if (isLoaded()) {
+          render();
+        }
+      });
+    });
+  }
+}
+
+
 AFRAME.registerComponent('htmltexture', {
   dependencies: ['draw'],
   schema: {
@@ -41,18 +96,10 @@ AFRAME.registerComponent('htmltexture', {
       return;
     }
 
-    node.style.display = 'block';
-
-    var clone = node.cloneNode(true);
-    document.body.appendChild(clone);
-
-    clone.style.cssText = 'width: ' + width + 'px !important; height: ' + height + 'px !important; padding: 0; position: absolute; left: 0; top: 0; z-index: -1; box-sizing: border-box;';
-
-    html2canvas(clone, { width: width, height: height, onrendered: function (canvas) {
-      document.body.removeChild(clone);
+    queueRender(node, width, height, function (canvas) {
       renderedCanvas = canvas;
       draw.render();
-    }});
+    });
   },
 
   render: function () {
