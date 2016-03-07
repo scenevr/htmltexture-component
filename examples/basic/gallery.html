@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <script src="../build.js"></script>
+    <!--
+    script src="https://rawgit.com/aframevr/aframe/dev/dist/aframe.min.js"></script>
+    <script src="/dist/aframe-htmltexture-component.min.js"></script>
+    -->
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <meta charset="utf-8"></meta>
+    <style>
+      body{
+        font-family: 'roboto', 'open sans', sans-serif;
+      }
+      .billboard{
+        background: white;
+        border: 1px solid #555;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+      </a-assets>
+
+      <!-- SceneVR lighting -->
+      <!--a-entity light="type: ambient; color: #777"></a-entity>
+      <a-entity light="type: spot; angle: 45; color: #ffffff; intensity: 0.9" position="100 100 100"></a-entity-->
+      <a-sky color="#cef"></a-sky>
+      <a-entity id="grid" rotation="-90 0 0" geometry="primitive: plane; width: 64; height: 64;" material="repeat: 64 64; src: url(https://assets-scenevr-com.s3-us-west-1.amazonaws.com/prerelease/images/grid.png)"></a-entity>
+
+      <!-- Gallery -->
+      <a-entity id="gallery"></a-entity>
+    </a-scene>
+
+    <script>
+      var width = 480;
+      var height = 420;
+      var subreddit = 'fractalporn';
+      var apikey = '90eb0b46c1e146e5afbbe0279e77866b';
+      var THREE = AFRAME.THREE;
+
+      $.ajax({
+        url: 'https://www.reddit.com/r/' + subreddit + '.json?limit=100',
+        dataType: 'jsonp',
+        jsonp: 'jsonp',
+        success: function (data) {
+          var listings = data.data.children;
+
+          var i = 0;
+
+          listings.forEach(function (listing) {
+            var ext = listing.data.url.replace(/^.+\./, '').toLowerCase();
+
+            if ((ext === 'jpg') || (ext === 'png') || (ext === 'jpeg')) {
+              // ok
+            } else {
+              return;
+            }
+
+            if (i > 20) {
+              return;
+            }
+
+            var image = 'http://i.embed.ly/1/display/resize?url=' + encodeURIComponent(listing.data.url) + '&animate=false&quality=90&grow=true&width=' + width + '&height=' + height + '&key=' + apikey;
+
+            var id = 'reddit-' + listing.data.id;
+            
+            var div = document.createElement('div');
+            div.className = 'billboard';
+            div.id = id;
+            div.innerHTML = '<h3 style="margin: 10px 0; text-align: center">' + listing.data.title.slice(0, 30) + '...</h3><center><img crossorigin="anonymous" src="' + image + '" /><center>';
+            document.querySelector('a-assets').appendChild(div);
+            
+            var box = document.createElement('a-box');
+
+            var x = i % 5;
+            var z = -Math.floor(i / 5);
+
+            var p = new THREE.Vector3(x, 0, z).multiplyScalar(5).add(new THREE.Vector3(-7.5, 1.5, -1));
+            box.setAttribute('position', p);
+            box.setAttribute('scale', new THREE.Vector3(3, 3, 0.2).multiplyScalar(0.5));
+            box.setAttribute('draw', 'width: 512; height: 512');
+            box.setAttribute('htmltexture', 'asset: #' + id);
+            box.setAttribute('material', 'color: white');
+
+            document.querySelector('a-scene').appendChild(box);
+
+            i++;
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
