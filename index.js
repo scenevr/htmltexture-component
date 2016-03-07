@@ -1,6 +1,6 @@
 /* globals AFRAME, MutationObserver */
 
-var html2canvas = require('html2canvas/src/core');
+var html2canvas = require('./vendor/html2canvas/core');
 
 var renderedCanvas;
 
