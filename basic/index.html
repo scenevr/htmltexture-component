@@ -83,7 +83,7 @@
         </div>
 
         <div id="goodbye">
-          <center>🐻</center>
+          <center>1</center>
         </div>
 
 
@@ -119,10 +119,22 @@
     <script>
       var el = document.querySelector('#box');
       var r = new THREE.Euler();
+
       setInterval(function () {
         r.y += 0.1;
         el.setAttribute('rotation', r);
       }, 1000 / 60);
+
+      var i = 1;
+      setInterval(function () {
+        document.querySelector('#goodbye center').innerHTML = i;
+        i++;
+
+        if (i==5) {
+          i = 1;
+        }
+      }, 1000);
+
     </script>
   </body>
 </html>

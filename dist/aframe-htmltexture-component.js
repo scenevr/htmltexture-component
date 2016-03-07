@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* globals AFRAME */
+	/* globals AFRAME, MutationObserver */
 
 	var html2canvas = __webpack_require__(1);
 
@@ -142,6 +142,18 @@
 	      return;
 	    }
 
+	    if (!this.observer) {
+	      this.observer = new MutationObserver(function (mutations) {
+	        queueRender(node, width, height, function (canvas) {
+	          renderedCanvas = canvas;
+	          draw.render();
+	        });
+	      });
+
+	      var config = { attributes: true, childList: true, characterData: true, subtree: true };
+	      this.observer.observe(node, config);
+	    }
+
 	    queueRender(node, width, height, function (canvas) {
 	      renderedCanvas = canvas;
 	      draw.render();
@@ -161,7 +173,11 @@
 	   * Called when a component is removed (e.g., via removeAttribute).
 	   * Generally undoes all modifications to the entity.
 	   */
-	  remove: function () {}
+	  remove: function () {
+	    if (this.observer) {
+	      this.observer.disconnect();
+	    }
+	  }
 	});
 
 
@@ -203,7 +219,6 @@
 	    var height = options.height || 512;
 
 	    return renderNode(nodeList, width, height).then(function (canvas) {
-	        console.log(canvas);
 	        options.onrendered(canvas);
 	    });
 	}
@@ -252,19 +267,6 @@
 	    var renderer = new options.renderer(width, height, imageLoader, options, document);
 	    var parser = new NodeParser(node, renderer, support, imageLoader, options);
 	    return parser.ready.then(function() {
-	        console.log('Finished rendering');
-	        //var canvas;
-
-	        //console.log()
-	        // if (options.type === "view") {
-	        //     canvas = crop(renderer.canvas, {width: renderer.canvas.width, height: renderer.canvas.height, top: 0, left: 0, x: 0, y: 0});
-	        // } else if (node === clonedWindow.document.body || node === clonedWindow.document.documentElement || options.canvas != null) {
-	        //     canvas = renderer.canvas;
-	        // } else {
-	        //     canvas = crop(renderer.canvas, {width:  options.width != null ? options.width : bounds.width, height: options.height != null ? options.height : bounds.height, top: bounds.top, left: bounds.left, x: 0, y: 0});
-	        // }
-
-	        // cleanupContainer(container, options);
 	        return renderer.canvas;
 	    });
 	}

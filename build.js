@@ -62930,7 +62930,7 @@ AFRAME.registerComponent("draw", drawComponent);
 require("../index.js");
 
 },{"../index.js":3,"aframe":1,"aframe-draw-component":4}],3:[function(require,module,exports){
-/* globals AFRAME */
+/* globals AFRAME, MutationObserver */
 
 var html2canvas = require('html2canvas/src/core');
 
@@ -63028,6 +63028,18 @@ AFRAME.registerComponent('htmltexture', {
       return;
     }
 
+    if (!this.observer) {
+      this.observer = new MutationObserver(function (mutations) {
+        queueRender(node, width, height, function (canvas) {
+          renderedCanvas = canvas;
+          draw.render();
+        });
+      });
+
+      var config = { attributes: true, childList: true, characterData: true, subtree: true };
+      this.observer.observe(node, config);
+    }
+
     queueRender(node, width, height, function (canvas) {
       renderedCanvas = canvas;
       draw.render();
@@ -63047,7 +63059,11 @@ AFRAME.registerComponent('htmltexture', {
    * Called when a component is removed (e.g., via removeAttribute).
    * Generally undoes all modifications to the entity.
    */
-  remove: function () {}
+  remove: function () {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
 });
 
 },{"html2canvas/src/core":8}],4:[function(require,module,exports){
