@@ -56280,8 +56280,6 @@ module.exports.Component = registerComponent('look-controls', {
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
-
-    // Pointer lock
     this.onPointerLockChange = this.onPointerLockChange.bind(this);
     this.onPointerLockError = this.onPointerLockError.bind(this);
   },
@@ -56346,6 +56344,12 @@ module.exports.Component = registerComponent('look-controls', {
     canvasEl.removeEventListener('touchstart', this.onTouchStart);
     canvasEl.removeEventListener('touchmove', this.onTouchMove);
     canvasEl.removeEventListener('touchend', this.onTouchEnd);
+
+    // Pointer lock
+    document.removeEventListener('pointerlockchange', this.onPointerLockChange);
+    document.removeEventListener('pointerlockerror', this.onPointerLockError);
+    document.removeEventListener('mozpointerlockchange', this.onPointerLockChange);
+    document.removeEventListener('mozpointerlockerror', this.onPointerLockError);
   },
 
   updateOrientation: (function () {
@@ -56732,10 +56736,6 @@ function loadImageTexture (material, src, repeat) {
 
   function createTexture (texture) {
     if (!(texture instanceof THREE.Texture)) { texture = new THREE.Texture(texture); }
-    // texture.generateMipmaps = true;
-    // texture.anisotropy = 1;
-    // console.log('eh?');
-
     var repeatXY;
     if (repeat) {
       repeatXY = repeat.split(' ');
@@ -62932,7 +62932,7 @@ require("../index.js");
 },{"../index.js":3,"aframe":1,"aframe-draw-component":4}],3:[function(require,module,exports){
 /* globals AFRAME, MutationObserver */
 
-var html2canvas = require('html2canvas/src/core');
+var html2canvas = require('./vendor/html2canvas/core');
 
 var renderedCanvas;
 
@@ -63066,7 +63066,7 @@ AFRAME.registerComponent('htmltexture', {
   }
 });
 
-},{"html2canvas/src/core":8}],4:[function(require,module,exports){
+},{"./vendor/html2canvas/core":8}],4:[function(require,module,exports){
 /**
  * Example component for A-Frame.
  */
