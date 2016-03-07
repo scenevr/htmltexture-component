@@ -1,4 +1,4 @@
-/* globals AFRAME */
+/* globals AFRAME, MutationObserver */
 
 var html2canvas = require('html2canvas/src/core');
 
@@ -96,6 +96,18 @@ AFRAME.registerComponent('htmltexture', {
       return;
     }
 
+    if (!this.observer) {
+      this.observer = new MutationObserver(function (mutations) {
+        queueRender(node, width, height, function (canvas) {
+          renderedCanvas = canvas;
+          draw.render();
+        });
+      });
+
+      var config = { attributes: true, childList: true, characterData: true, subtree: true };
+      this.observer.observe(node, config);
+    }
+
     queueRender(node, width, height, function (canvas) {
       renderedCanvas = canvas;
       draw.render();
@@ -115,5 +127,9 @@ AFRAME.registerComponent('htmltexture', {
    * Called when a component is removed (e.g., via removeAttribute).
    * Generally undoes all modifications to the entity.
    */
-  remove: function () {}
+  remove: function () {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
 });
